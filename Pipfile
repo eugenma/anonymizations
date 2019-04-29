@@ -1,17 +1,21 @@
 [[source]]
-url = "https://pypi.python.org/simple"
-verify_ssl = true
 name = "pypi"
-
-[packages]
-4eae1cb = {path = "./pyrobdean",editable = true}
-pandas-datareader = "*"
-matplotlib = "*"
-joblib = "*"
-"flake8" = "*"
-ipywidgets = "*"
-jupyter-contrib-nbextensions = "*"
-jupyter-nbextensions-configurator = "*"
-alpha-vantage = "*"
+url = "https://pypi.org/simple"
+verify_ssl = true
 
 [dev-packages]
+ipywidgets = "*"
+jupyter = "*"
+jupyter-contrib-nbextensions = "*"
+jupyter-nbextensions-configurator = "*"
+
+[packages]
+numpy = "*"
+matplotlib = "*"
+pandas = "*"
+joblib = "*"
+flake8 = "*"
+alpha-vantage = "*"
+
+[requires]
+python_version = "3.7"
