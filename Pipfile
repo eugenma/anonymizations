@@ -1,21 +1,17 @@
 [[source]]
-
-url = "https://pypi.python.org/simple"
+url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [packages]
-
-"4eae1cb" = {path = ".\\pyrobdean", editable = true}
-pandas-datareader = "*"
+numpy = "*"
 matplotlib = "*"
+pandas = "*"
+pyrobdean = {editable = true,path = "./pyrobdean"}
 joblib = "*"
-"flake8" = "*"
-ipywidgets = "*"
-jupyter-contrib-nbextensions = "*"
-jupyter-nbextensions-configurator = "*"
-
 
 [dev-packages]
+jupyter = "*"
 
+[requires]
+python_version = "3.6"
