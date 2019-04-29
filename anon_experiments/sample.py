@@ -1,5 +1,6 @@
 from functools import partial
-from typing import Sequence, Optional
+import itertools
+from typing import Sequence, Optional, Callable
 
 from joblib import Memory
 
@@ -16,37 +17,44 @@ def generate_uniform(size: Sequence[int]) -> pd.DataFrame:
     return pd.DataFrame(np.random.randint(0, 100, size=size))
 
 
-def generate_tickers(tickers: Optional[Sequence[str]]=None) -> pd.DataFrame:
+def build_accessor_alphavantage(key):
+    from alpha_vantage.timeseries import TimeSeries
+    
+    @mem.cache(ignore=['ts', ])
+    def single_accessor(ts: TimeSeries, ticker: str) -> pd.Series:
+        data, meta = ts.get_daily(ticker)
+        return data['1. open'].reset_index(drop=True)
+        
+    def accessor(tickers: Sequence[str]) -> pd.DataFrame:
+        ts = TimeSeries(key, output_format='pandas')
+
+        data, rows_calc_data = itertools.tee(map(partial(single_accessor, ts), tickers))
+        min_rows = min(map(lambda d: d.shape[0], rows_calc_data))
+        same_size_data = map(lambda d: d.iloc[:min_rows,], data) 
+        combine = pd.concat(list(same_size_data), axis=1)
+        combine.columns = list(range(combine.shape[1]))
+        return combine
+
+    return accessor
+
+
+def generate_tickers(tickers: Optional[Sequence[str]], accessor: Callable[[Sequence[str],], pd.DataFrame]) -> pd.DataFrame:
     """Create a sample data from asset tickers.
 
     :param tickers: The NASDAQ Tickers one wants to use. Has a default of 12
                     tickers.
     """
-    def fit(asset: pd.DataFrame, nrows) -> pd.DataFrame:
-        """Return first `nrows` 'Open' ticks."""
-        column = asset.columns.get_loc('Open')
-        asset.reset_index(drop=True, inplace=True)
-        return asset.iloc[:nrows, column]
-
     if not tickers:
         # Just some default tickers. There is no meaning behind the list and
         # are chosen without any order or relation.
         tickers = ['AAPL', 'ABC', 'IBM',
                    'MSFT', 'FB', 'AMZN',
                    'SAP', 'VLKAY', 'BASFY',
-                   'PG', 'NSRGF', 'DB']
+                   'PG', 
+                   # 'NSRGF', 
+                   'DB']
 
-    assets = list(pdr.get_data_morningstar(t) for t in tickers)
-    min_shape = min([a.shape[0] for a in assets])
-    raw_data = map(partial(fit, nrows=min_shape), assets)
-
-    combine = pd.concat(list(raw_data), axis=1)
-    combine.columns = list(range(combine.shape[1]))
-
-    get_combine = mem.cache(lambda: combine)
-
-    df = get_combine()
-
+    df = accessor(tickers)
     return df
 
 

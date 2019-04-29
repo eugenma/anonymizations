@@ -31,10 +31,10 @@ def disclose(orig: pd.DataFrame, rows: Union[float, int]=0.5, num_attribs: int=3
     :param num_attribs: Amount of attributes one want to disclose. 
     :param rows: Either percentage (if `rows < 1.0`) or absolute number of 
             rows one wants to disclose.
-	:return: The dataframe with `rows` amount of rows an same number of 
+    :return: The dataframe with `rows` amount of rows an same number of 
             attributes as `orig`. In each record there are `num_attribs` 
             disclosed attributes. Other remain as `NaN`.
-	"""
+    """
     if rows >= 1.0:
         num_rows = rows
     else:

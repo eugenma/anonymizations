@@ -1,13 +1,10 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [packages]
-
-"4eae1cb" = {path = ".\\pyrobdean", editable = true}
+4eae1cb = {path = "./pyrobdean",editable = true}
 pandas-datareader = "*"
 matplotlib = "*"
 joblib = "*"
@@ -15,7 +12,6 @@ joblib = "*"
 ipywidgets = "*"
 jupyter-contrib-nbextensions = "*"
 jupyter-nbextensions-configurator = "*"
-
+alpha-vantage = "*"
 
 [dev-packages]
-
